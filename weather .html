@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        #weather-app {
+            margin: 20px;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #location, #current-weather {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="weather-app">
+        <h1>Weather App</h1>
+        <input type="text" id="lat-input" placeholder="Enter latitude">
+        <input type="text" id="lon-input" placeholder="Enter longitude">
+        <button onclick="getWeather()">Get Weather</button>
+
+        <div id="location"></div>
+        <div id="current-weather"></div>
+    </div>
+
+    <script>
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        async function getWeather() {
+            const lat = document.getElementById('lat-input').value;
+            const lon = document.getElementById('lon-input').value;
+
+            if (!lat || !lon || isNaN(lat) || isNaN(lon)) {
+                alert('Please enter valid latitude and longitude.');
+                return;
+            }
+
+            const apiKey = 's8sqzNviyUoDuYk1otBT0WuXG7ky2BXe';
+            const apiUrl = `https://api.tomorrow.io/v4/weather/forecast?location=${lat},${lon}&apikey=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    throw new Error('Weather data could not be fetched.');
+                }
+
+                const data = await response.json();
+
+                const currentTemp = data.timelines.daily[0].values.temperatureAvg; // Check this path based on actual API response
+
+                document.getElementById('location').innerText = `Coordinates: ${lat}, ${lon}`;
+                document.getElementById('current-weather').innerText = `Avg Temp: ${currentTemp}°C`;
+                document.body.style.backgroundColor = getRandomColor();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+    </script>
+</body>
+
+</html>
